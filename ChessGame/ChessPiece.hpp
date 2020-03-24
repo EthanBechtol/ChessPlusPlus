@@ -8,7 +8,6 @@
 
 #include <string>
 #include <vector>
-#include "ChessMove.hpp"
 
 class ChessPiece {
 public:
