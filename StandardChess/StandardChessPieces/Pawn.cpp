@@ -7,19 +7,30 @@
 Pawn::Pawn(): isFirstMove{true} {
     name = "Pawn";
     white = true;
+    hasCaptureMoves = true;
+    hasJumpAbility = false;
 }
 
-Pawn::Pawn(bool isWhite): isFirstMove{true} {
-    name = "Pawn";
+Pawn::Pawn(bool isWhite): Pawn() {
     white = isWhite;
 }
 
+// FIXME account for directionality if the piece is either white or black.
+//  Currently these methods allow pawns to go both forwards and backwards incorrectly.
 bool Pawn::isValidMove(std::pair<int, int> start, std::pair<int, int> end) const {
-    if(isFirstMove) {
+    if(isFirstMove)
         return (std::abs(start.first - end.first) == 1 || std::abs(start.first - end.first) == 2) && start.second == end.second;
-    }
-    else {
-        // FIXME Need to account for the fact that pawns can only take a piece diagonally
+    else
         return std::abs(start.first - end.first) == 1 && start.second == end.second;
-    }
 }
+
+bool Pawn::isValidCaptureMove(std::pair<int, int> start, std::pair<int, int> end) const {
+    /*
+     *    Y N Y  | Y = capturable
+     *    N P N  | N = uncapturable
+     *    N N N  | P = pawn position
+     */
+
+    return std::abs(start.first - end.first) == 1 && std::abs(start.second - end.second) == 1;
+}
+

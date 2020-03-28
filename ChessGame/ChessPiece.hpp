@@ -20,6 +20,17 @@ public:
     // positions are possible given the piece's move rule set.
     virtual bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) const;
 
+    // isValidCaptureMove returns whether or not the piece can make a move to take another piece
+    virtual bool isValidCaptureMove(std::pair<int, int> start, std::pair<int, int> end) const;
+
+    // hasCaptureMove() returns true if the piece has different rules for how it is able to capture another piece,
+    // and false if it can take a piece using its normal moves.
+    virtual bool hasCaptureMove() const { return hasCaptureMoves; };
+
+    // canJump() returns true if a piece has the ability to jump over other pieces and false otherwise.
+    // For example, a knight can jump over a line of pawns while a rook cannot.
+    virtual bool canJump() const { return hasJumpAbility; };
+
     // getName() returns the name of the current piece
     virtual std::string getName() const { return name; };
 
@@ -31,6 +42,8 @@ protected:
     //std::vector<ChessMove> moveSet;
     std::string name;
     bool white;
+    bool hasCaptureMoves;
+    bool hasJumpAbility;
 };
 
 

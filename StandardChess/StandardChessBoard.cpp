@@ -90,7 +90,7 @@ int StandardChessBoard::height() const noexcept {
 }
 
 bool StandardChessBoard::isValidCell(int row, int col) const noexcept {
-    return 0 <= row && row <= _width - 1 && 0 <= col && col <= _height - 1;
+    return 0 <= row && row < _height && 0 <= col && col < _width;
 }
 
 std::shared_ptr<ChessCell> StandardChessBoard::getCell(int row, int col) {

@@ -8,10 +8,11 @@
 Knight::Knight() {
     name = "Knight";
     white = true;
+    hasCaptureMoves = false;
+    hasJumpAbility = true;
 }
 
-Knight::Knight(bool isWhite) {
-    name = "Knight";
+Knight::Knight(bool isWhite): Knight() {
     white = isWhite;
 }
 

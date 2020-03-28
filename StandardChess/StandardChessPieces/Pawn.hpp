@@ -16,6 +16,8 @@ public:
 
     bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) const override;
 
+    bool isValidCaptureMove(std::pair<int, int> start, std::pair<int, int> end) const override;
+
     // setFirstMove() sets the pawn's isFirstMove flag thus altering the piece's moveSet.
     void setFirstMove(bool firstMoveState) { isFirstMove = firstMoveState; };
 

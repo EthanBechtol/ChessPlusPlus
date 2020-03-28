@@ -7,10 +7,11 @@
 Rook::Rook() {
     name = "Rook";
     white = true;
+    hasCaptureMoves = false;
+    hasJumpAbility = false;
 }
 
-Rook::Rook(bool isWhite) {
-    name = "Rook";
+Rook::Rook(bool isWhite): Rook() {
     white = isWhite;
 }
 

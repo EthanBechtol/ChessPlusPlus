@@ -7,10 +7,11 @@
 King::King() {
     name = "King";
     white = true;
+    hasCaptureMoves = false;
+    hasJumpAbility = false;
 }
 
-King::King(bool isWhite) {
-    name = "King";
+King::King(bool isWhite): King() {
     white = isWhite;
 }
 

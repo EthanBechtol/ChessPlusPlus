@@ -7,10 +7,11 @@
 Queen::Queen() {
     name = "Queen";
     white = true;
+    hasCaptureMoves = false;
+    hasJumpAbility = false;
 }
 
-Queen::Queen(bool isWhite) {
-    name = "Queen";
+Queen::Queen(bool isWhite): Queen() {
     white = isWhite;
 }
 

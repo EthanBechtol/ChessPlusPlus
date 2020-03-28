@@ -7,10 +7,11 @@
 Bishop::Bishop() {
     name = "Bishop";
     white = true;
+    hasCaptureMoves = false;
+    hasJumpAbility = false;
 }
 
-Bishop::Bishop(bool isWhite) {
-    name = "Bishop";
+Bishop::Bishop(bool isWhite): Bishop() {
     white = isWhite;
 }
 
