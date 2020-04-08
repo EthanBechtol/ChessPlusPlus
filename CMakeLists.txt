@@ -34,4 +34,10 @@ add_executable(ChessPlusPlus main.cpp
         StandardChess/StandardChessPieces/Rook.cpp
         StandardChess/StandardChessPieces/Rook.hpp
         StandardChess/StandardChessPieces/King.cpp
-        StandardChess/StandardChessPieces/King.hpp)
+        StandardChess/StandardChessPieces/King.hpp
+
+
+        Experimental/EXPChessMove.hpp
+
+        Input/InputReader.cpp
+        Input/InputReader.hpp StandardChess/StandardChessAIs/RandomAI.cpp StandardChess/StandardChessAIs/RandomAI.hpp ChessGame/ChessPieceMobility.hpp ChessUtility/PairHash.hpp ChessGame/ChessAIException.hpp)

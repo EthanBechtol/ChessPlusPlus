@@ -9,6 +9,14 @@ Rook::Rook() {
     white = true;
     hasCaptureMoves = false;
     hasJumpAbility = false;
+
+    moveSet = {
+            // Horizontal/vertical moves
+            {Mobility::slide, {1, 0}},
+            {Mobility::slide, {-1, 0}},
+            {Mobility::slide, {0, 1}},
+            {Mobility::slide, {0, -1}}
+    };
 }
 
 Rook::Rook(bool isWhite): Rook() {

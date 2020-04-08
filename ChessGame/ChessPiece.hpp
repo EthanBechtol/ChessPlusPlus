@@ -8,6 +8,9 @@
 
 #include <string>
 #include <vector>
+#include <unordered_set>
+#include "ChessPieceMobility.hpp"
+#include "../ChessUtility/PairHash.hpp"
 
 class ChessPiece {
 public:
@@ -38,8 +41,17 @@ public:
     virtual bool isWhite() const { return white; }
     virtual bool isBlack() const { return !white; }
 
+    // getMoveSet() returns a vector of ChessPieceMobility moves that any ChessPiece of this type is allowed to make.
+    // This is intended to be used to get efficient access to where a piece can move relative to its current position.
+    //
+    // Without this, the only way to figure out where a piece could move would have to be done in O(n^2) time
+    // (iterating through all board squares, then for each square iterating through them again to find if the path to
+    // the piece is unobstructed).
+    // This reduces the work to O(n).
+    const std::unordered_set<ChessPieceMobility>& getMoveSet() { return moveSet; };
+
 protected:
-    //std::vector<ChessMove> moveSet;
+    std::unordered_set<ChessPieceMobility> moveSet;
     std::string name;
     bool white;
     bool hasCaptureMoves;

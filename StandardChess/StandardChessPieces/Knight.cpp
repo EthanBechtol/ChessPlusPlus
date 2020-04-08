@@ -10,6 +10,20 @@ Knight::Knight() {
     white = true;
     hasCaptureMoves = false;
     hasJumpAbility = true;
+
+    moveSet = {
+            {Mobility::jump, {2, 1}},
+            {Mobility::jump, {2, -1}},
+
+            {Mobility::jump, {-2, 1}},
+            {Mobility::jump, {-2, -1}},
+
+            {Mobility::jump, {1, 2}},
+            {Mobility::jump, {1, -2}},
+
+            {Mobility::jump, {-1, 2}},
+            {Mobility::jump, {-1, -2}}
+    };
 }
 
 Knight::Knight(bool isWhite): Knight() {

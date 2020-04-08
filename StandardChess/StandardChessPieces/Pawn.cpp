@@ -9,10 +9,36 @@ Pawn::Pawn(): isFirstMove{true} {
     white = true;
     hasCaptureMoves = true;
     hasJumpAbility = false;
+    
+    moveSet = {
+            // Vertical moves
+            {Mobility::jump, {-1, 0}},
+
+            // Opening 2 cell move TODO: check implementation
+            {Mobility::jump, {-2, 0}},
+
+            // Diagonal capture moves
+            {Mobility::jump, {-1, 1}},
+            {Mobility::jump, {-1, -1}}
+    };
 }
 
 Pawn::Pawn(bool isWhite): Pawn() {
     white = isWhite;
+
+    if(!isWhite){
+        moveSet = {
+                // Vertical moves
+                {Mobility::jump, {1, 0}},
+
+                // Opening 2 cell move TODO: check implementation
+                {Mobility::jump, {2, 0}},
+
+                // Diagonal capture moves
+                {Mobility::jump, {1, 1}},
+                {Mobility::jump, {1, -1}}
+        };
+    }
 }
 
 // FIXME account for directionality if the piece is either white or black.

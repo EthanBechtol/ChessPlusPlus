@@ -9,6 +9,13 @@ Bishop::Bishop() {
     white = true;
     hasCaptureMoves = false;
     hasJumpAbility = false;
+
+    moveSet = {
+            {Mobility::slide, {1, 1}},
+            {Mobility::slide, {-1, -1}},
+            {Mobility::slide, {-1, 1}},
+            {Mobility::slide, {1, -1}}
+    };
 }
 
 Bishop::Bishop(bool isWhite): Bishop() {

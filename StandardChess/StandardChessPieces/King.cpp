@@ -9,6 +9,20 @@ King::King() {
     white = true;
     hasCaptureMoves = false;
     hasJumpAbility = false;
+
+    moveSet = {
+            // Diagonal moves
+            {Mobility::jump, {1, 1}},
+            {Mobility::jump, {-1, -1}},
+            {Mobility::jump, {-1, 1}},
+            {Mobility::jump, {1, -1}},
+
+            // Horizontal/vertical moves
+            {Mobility::jump, {1, 0}},
+            {Mobility::jump, {-1, 0}},
+            {Mobility::jump, {0, 1}},
+            {Mobility::jump, {0, -1}}
+    };
 }
 
 King::King(bool isWhite): King() {

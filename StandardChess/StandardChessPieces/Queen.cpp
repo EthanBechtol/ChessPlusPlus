@@ -9,6 +9,20 @@ Queen::Queen() {
     white = true;
     hasCaptureMoves = false;
     hasJumpAbility = false;
+
+    moveSet = {
+            // Diagonal moves
+            {Mobility::slide, {1, 1}},
+            {Mobility::slide, {-1, -1}},
+            {Mobility::slide, {-1, 1}},
+            {Mobility::slide, {1, -1}},
+
+            // Horizontal/vertical moves
+            {Mobility::slide, {1, 0}},
+            {Mobility::slide, {-1, 0}},
+            {Mobility::slide, {0, 1}},
+            {Mobility::slide, {0, -1}}
+    };
 }
 
 Queen::Queen(bool isWhite): Queen() {
