@@ -123,7 +123,15 @@ void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, 
     // Check the validity of the move, which will throw a ChessException upon failure with an error message, which is caught by the main game loop.
     isValidMoveThrow(start, end, whiteTurn);
 
-    // TODO increment points
+    // TODO make points more meaningful
+    if(_board->getCell(end.first, end.second)->getState() != ChessCellState::empty){
+        if(whiteTurn){
+            ++whitePoints;
+        }
+        else{
+            ++blackPoints;
+        }
+    }
     _board->movePiece(start, end);
     whiteTurn = !whiteTurn;
 }
