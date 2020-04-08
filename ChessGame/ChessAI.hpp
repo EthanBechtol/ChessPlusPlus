@@ -14,6 +14,7 @@
 // a move given solely the current state of the game in the form of a ChessGameState.
 
 class ChessAI {
+public:
     virtual ~ChessAI() = default;
 
     // choseMove() returns the best move this AI believes is the best. With that move, the game manager will make update
