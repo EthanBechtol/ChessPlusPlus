@@ -10,6 +10,11 @@ namespace {
     inline bool moveIsInBounds(std::pair<int, int> move, int boardWidth, int boardHeight){
         return move.first >= 0 && move.first < boardHeight && move.second >= 0 && move.second < boardWidth;
     }
+
+    template <typename T, typename T2>
+    std::pair<int, int> addPair(const std::pair<T, T2>& pair, const std::pair<T, T2>& pair2){
+        return {pair.first + pair2.first, pair.second + pair2.second};
+    }
 }
 
 StandardChessGameState::StandardChessGameState(StandardChessBoard board)
@@ -41,18 +46,12 @@ bool StandardChessGameState::isBlackTurn() const noexcept {
     return !whiteTurn;
 }
 
-bool StandardChessGameState::isValidMove(std::pair<int, int> start, std::pair<int, int> end) {
-    std::shared_ptr<ChessCell> startCell = _board->getCell(start.first, start.second);
-
-    if(startCell->getState() == ChessCellState::empty)
-        return false;
-    else
-        return (startCell->getPiece().isValidMove(start, end) || startCell->getPiece().isValidCaptureMove(start, end));
-}
-
-void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, int> end) {
+void StandardChessGameState::isValidMoveThrow(std::pair<int, int> start, std::pair<int, int> end, bool isWhite) const {
     std::string startStr = '(' + std::to_string(start.first) + ", " + std::to_string(start.second) + ')';
     std::string endStr = '(' + std::to_string(end.first) + ", " + std::to_string(end.second) + ')';
+
+    std::shared_ptr<ChessCell> startCell = _board->getCell(start.first, start.second);
+    std::shared_ptr<ChessCell> endCell = _board->getCell(end.first, end.second);
 
     // If the start move position is not in bounds, throw a ChessException.
     if(!moveIsInBounds(start, _board->width(), _board->height())){
@@ -64,45 +63,104 @@ void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, 
         //std::string endStr = '(' + std::to_string(end.first) + ", " + std::to_string(end.second) + ')';
         throw ChessException{"Invalid move: end position is not in bounds " + startStr + " -> " + endStr};
     }
-    // If the starting cell is either empty or the piece at the cell cannot make the requested move, throw a ChessException.
-    else if(!isValidMove(start, end)){
-        //std::string endStr = '(' + std::to_string(end.first) + ", " + std::to_string(end.second) + ')';
-        throw ChessException{"Invalid move: " + startStr + " -> " + endStr};
+    else if(startCell->getState() == ChessCellState::empty){
+        throw ChessException{"Invalid move: start position is empty"  + startStr + " -> " + endStr};
+    }
+    else if(!(startCell->getPiece().isValidMove(start, end) || startCell->getPiece().isValidCaptureMove(start, end))){
+        throw ChessException{"Invalid move: a " + startCell->getPiece().getName() +
+                             " cannot move under any circumstances from " + startStr + " -> " + endStr};
     }
     // If the piece at the requested position does not belong to the player requesting the move, throw a ChessException.
-    else if((_board->getCell(start.first, start.second)->getPiece().isWhite() && !isWhiteTurn()) ||
-            (_board->getCell(start.first, start.second)->getPiece().isBlack() && !isBlackTurn())){
+    else if((startCell->getPiece().isWhite() && !isWhite) ||
+            (startCell->getPiece().isBlack() && isWhite)){
+        std::string currColor = isWhite ? "white" : "black";
+        throw ChessException{"Invalid move request: the piece at " + startStr + " does not belong to " + currColor};
+    }
+    // If the player tries to take one of their own pieces, throw a ChessException.
+    else if(endCell->getState() != ChessCellState::empty &&
+            ((startCell->getPiece().isWhite() && endCell->getPiece().isWhite()) ||
+             (startCell->getPiece().isBlack() && endCell->getPiece().isBlack()))){
         std::string currColor = isWhiteTurn() ? "white" : "black";
-        throw ChessException{"Invalid move request. The piece at " + startStr + " does not belong to " + currColor};
+        throw ChessException{"Invalid move: the pieces at " + startStr + " and " + endStr + " both belong to " + currColor};
     }
-    else {
-        // TODO check jump abilities
-        std::shared_ptr<ChessCell> startCell = _board->getCell(start.first, start.second);
-        std::shared_ptr<ChessCell> endCell = _board->getCell(end.first, end.second);
 
-        if(endCell->getState() != ChessCellState::empty){
-            // TODO increment points
-            if(startCell->getPiece().hasCaptureMove()) {
-                if (startCell->getPiece().isValidCaptureMove(start, end))
-                    _board->movePiece(start, end);
-                else
-                    throw ChessException{"Invalid capture move: a " + startCell->getPiece().getName() +
-                                         " cannot perform a capture from " + startStr + " -> " + endStr};
-            }
-            else
-                _board->movePiece(start, end);
-        }
-        else
-            if(startCell->getPiece().isValidMove(start, end))
-                _board->movePiece(start, end);
-            else
-                throw ChessException{"Invalid capture move: cannot capture an empty cell " + startStr + " -> " + endStr};
-
-        whiteTurn = !whiteTurn;
+    else if(endCell->getState() != ChessCellState::empty && startCell->getPiece().hasCaptureMove() && !startCell->getPiece().isValidCaptureMove(start, end)){
+        throw ChessException{"Invalid capture move: a " + startCell->getPiece().getName() +
+                             " cannot perform a capture from " + startStr + " -> " + endStr};
     }
+    else if(!startCell->getPiece().isValidMove(start, end) && startCell->getPiece().isValidCaptureMove(start, end)
+            && endCell->getState() == ChessCellState::empty){
+        throw ChessException{"Invalid capture move: cannot capture an empty cell " + startStr + " -> " + endStr};
+    }
+//    else if(!checkPieceMobility(start, end)){
+//
+//    }
+}
+
+bool StandardChessGameState::isValidMove(std::pair<int, int> start, std::pair<int, int> end) const {
+    try{
+        isValidMoveThrow(start, end, whiteTurn);
+    }
+    catch(ChessException& e){
+        return false;
+    }
+
+    return true;
+}
+
+bool StandardChessGameState::isValidMoveForPlayer(std::pair<int, int> start, std::pair<int, int> end, bool isWhite) const {
+    try{
+        isValidMoveThrow(start, end, isWhite);
+    }
+    catch(ChessException& e){
+        return false;
+    }
+
+    return true;
+}
+
+void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, int> end) {
+    // Check the validity of the move, which will throw a ChessException upon failure with an error message, which is caught by the main game loop.
+    isValidMoveThrow(start, end, whiteTurn);
+
+    // TODO increment points
+    _board->movePiece(start, end);
+    whiteTurn = !whiteTurn;
 }
 
 std::unique_ptr<ChessGameState> StandardChessGameState::clone() const {
     // TODO implement cloning that DEEP copies the current state.
     return std::unique_ptr<ChessGameState>();
+}
+
+std::vector<std::pair<int, int>> StandardChessGameState::getValidPieceMoves(std::pair<int, int> start) const {
+    std::shared_ptr<ChessCell> startCell = _board->getCell(start.first, start.second);
+    bool isWhite = startCell->getPiece().isWhite();
+    std::vector<std::pair<int, int>> result;
+
+    for(const ChessPieceMobility& move : startCell->getPiece().getMoveSet()){
+        if(move.type == Mobility::jump){
+            std::pair<int, int> add = addPair(start, move.direction);
+            if(isValidMoveForPlayer(start, addPair(start, move.direction), isWhite))
+                result.push_back(addPair(start, move.direction));
+        }
+        else{
+            std::pair<int, int> currPos{start};
+            while(moveIsInBounds(currPos, _board->width(), _board->height())){
+                currPos = addPair(currPos, move.direction);
+
+                if(!moveIsInBounds(currPos, _board->width(), _board->height()))
+                    break;
+
+                if(isValidMoveForPlayer(start, currPos, isWhite))
+                    result.push_back(currPos);
+
+                if(_board->getCell(currPos.first, currPos.second)->getState() != ChessCellState::empty)
+                    break;
+            }
+        }
+
+    }
+
+    return result;
 }

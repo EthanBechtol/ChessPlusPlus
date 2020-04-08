@@ -33,7 +33,7 @@ public:
 
     // isValidMove() returns true if the piece at start<x, y> can validly move to end<x, y>,
     // and false otherwise.
-    virtual bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) override;
+    virtual bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) const override;
 
     // makeMove() makes a move on behalf of the current player with the chess piece
     // at cell start<x, y> ending at end<x,y>. If the move is invalid either by not being
@@ -44,6 +44,9 @@ public:
     // clone() returns a unique_ptr copy of the current game state.
     // Generally intended for use by an AI to simulate moves.
     virtual std::unique_ptr<ChessGameState> clone() const override;
+
+
+    virtual std::vector<std::pair<int, int>> getValidPieceMoves(std::pair<int, int> start) const override;
 
 private:
     // [white/black]Points keeps track of the number of points amassed by each colored player.
@@ -56,6 +59,15 @@ private:
     // gameOver is true if a checkmate is achieved by either player and false otherwise.
     // If true, the winner can be determined by whose turn it current is.
     bool gameOver;
+
+    // isValidMoveThrow() validates that a move from a start position to an end position given the color piece is valid to
+    // make. If not, then a ChessException will be thrown with the reason why a specific move cannot be made. This is
+    // a helper function used by isValidMove() above which passes the move along with the CURRENT player whose turn it is.
+    void isValidMoveThrow(std::pair<int, int> start, std::pair<int, int> end, bool isWhite) const;
+
+    // isValidMoveForPlayer() returns whether or not a piece at start can make a move to end validly given a particular
+    // player color. Returns true if it is valid and false otherwise.
+    bool isValidMoveForPlayer(std::pair<int, int> start, std::pair<int, int> end, bool isWhite) const;
 };
 
 

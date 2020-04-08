@@ -32,7 +32,7 @@ public:
 
     // isValidMove() returns true if the piece at start<x, y> can validly move to end<x, y>,
     // and false otherwise.
-    virtual bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) = 0;
+    virtual bool isValidMove(std::pair<int, int> start, std::pair<int, int> end) const = 0;
 
     // makeMove() makes a move on behalf of the current player with the chess piece
     // at cell start<x, y> ending at end<x,y>. If the move is invalid either by not being
@@ -43,6 +43,8 @@ public:
     // clone() returns a unique_ptr copy of the current game state.
     // Generally intended for use by an AI to simulate moves.
     virtual std::unique_ptr<ChessGameState> clone() const = 0;
+
+    virtual std::vector<std::pair<int, int>> getValidPieceMoves(std::pair<int, int> start) const = 0;
 
 protected:
     std::unique_ptr<ChessBoard> _board;
