@@ -34,6 +34,7 @@ public:
 
     // getCell() returns the a shared pointer for the ChessCell at the given (x, y) coordinates.
     std::shared_ptr<ChessCell> getCell(int row, int col) override;
+    std::shared_ptr<const ChessCell> getCell(int row, int col) const override;
 
     // setCell() changes the contents of the ChessCell at the given (x, y) coordinates
     // to be that of the given cell parameter. NOTE: no error checking is done here.

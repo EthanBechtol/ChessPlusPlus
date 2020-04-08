@@ -15,13 +15,14 @@ public:
 
     virtual int height() const noexcept = 0;
 
-    virtual bool isValidCell(int x, int y) const noexcept = 0;
+    virtual bool isValidCell(int row, int col) const noexcept = 0;
 
-    virtual std::shared_ptr<ChessCell> getCell(int x, int y) = 0;
+    virtual std::shared_ptr<ChessCell> getCell(int row, int col) = 0;
+    virtual std::shared_ptr<const ChessCell> getCell(int row, int col) const = 0;
 
     // setCell() forcefully sets the cell at the given position to have the parameters
     // of the given ChessCell
-    virtual void setCell(int x, int y, ChessCell cell) = 0;
+    virtual void setCell(int row, int col, ChessCell cell) = 0;
 
     // movePiece() attempts to move a piece from one cell to another. The function
     // will NOT check that it is valid to do so, only that it will not overwrite

@@ -95,7 +95,14 @@ bool StandardChessBoard::isValidCell(int row, int col) const noexcept {
 
 std::shared_ptr<ChessCell> StandardChessBoard::getCell(int row, int col) {
     if(!isValidCell(row, col))
-        throw ChessException("Invalid cell coordinates");
+        throw ChessException("Invalid cell coordinates: " + std::to_string(row) + ", " + std::to_string(col));
+
+    return cells[row][col];
+}
+
+std::shared_ptr<const ChessCell> StandardChessBoard::getCell(int row, int col) const {
+    if(!isValidCell(row, col))
+        throw ChessException("Invalid cell coordinates: " + std::to_string(row) + ", " + std::to_string(col));
 
     return cells[row][col];
 }
