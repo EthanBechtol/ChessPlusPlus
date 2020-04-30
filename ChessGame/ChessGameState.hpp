@@ -6,6 +6,7 @@
 #define CHESSPLUSPLUS_CHESSGAMESTATE_HPP
 
 
+#include <unordered_map>
 #include "ChessBoard.hpp"
 
 class ChessGameState {
@@ -44,10 +45,14 @@ public:
     // Generally intended for use by an AI to simulate moves.
     virtual std::unique_ptr<ChessGameState> clone() const = 0;
 
+    // getValidPieceMoves() returns a vector of valid coordinates to which the piece at the given start coordinates
+    // could move to.
     virtual std::vector<std::pair<int, int>> getValidPieceMoves(std::pair<int, int> start) const = 0;
 
-protected:
-    std::unique_ptr<ChessBoard> _board;
+    // getCapturedPieces() returns and unordered_map of <piece name, amount> for which either white or black has taken throughout
+    // the course of the game. For example, an output for which forWhite=true and white has taken two pawns and a knight
+    // would look as follows: { {"Pawn", 2}, {"Knight", 1} }
+    virtual const std::unordered_map<std::string, int>& getCapturedPieces(bool forWhite) const = 0;
 };
 
 
