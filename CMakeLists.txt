@@ -10,11 +10,13 @@ add_executable(ChessPlusPlus main.cpp
         ChessGame/ChessPiece.hpp
         ChessGame/ChessException.hpp
         ChessGame/ChessAI.hpp
+        ChessGame/ChessAIException.hpp
         ChessGame/ChessGameState.hpp
         ChessGame/ChessGameStateFactory.cpp
         ChessGame/ChessGameStateFactory.hpp
         ChessGame/ChessMove.hpp
         ChessGame/ChessPiece.cpp
+        ChessGame/ChessPieceMobility.hpp
 
         StandardChess/StandardChessBoard.cpp
         StandardChess/StandardChessBoard.hpp
@@ -36,6 +38,8 @@ add_executable(ChessPlusPlus main.cpp
         StandardChess/StandardChessPieces/King.cpp
         StandardChess/StandardChessPieces/King.hpp
 
+        StandardChess/StandardChessAIs/RandomAI.cpp
+        StandardChess/StandardChessAIs/RandomAI.hpp
 
         Experimental/EXPChessMove.hpp
 

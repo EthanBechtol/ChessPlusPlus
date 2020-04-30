@@ -8,9 +8,15 @@
 #include <random>
 #include "../../ChessGame/ChessAI.hpp"
 
-class RandomAI : ChessAI {
+class RandomAI : public ChessAI {
 public:
+    const static std::string AIName;
+    const static std::string AIDesc;
+
     ChessMove choseMove(const ChessGameState& state) override;
+
+    const std::string& name() const override { return AIName; };
+    const std::string& description() const override { return AIDesc; };
 };
 
 

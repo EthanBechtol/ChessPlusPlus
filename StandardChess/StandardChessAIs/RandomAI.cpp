@@ -7,6 +7,8 @@
 #include "RandomAI.hpp"
 #include "../../ChessGame/ChessAIException.hpp"
 
+const std::string RandomAI::AIName = "Random AI";
+const std::string RandomAI::AIDesc = "An AI that randomly chooses moves from all of those available.";
 
 ChessMove RandomAI::choseMove(const ChessGameState& state) {
     static std::random_device device;
@@ -39,6 +41,4 @@ ChessMove RandomAI::choseMove(const ChessGameState& state) {
     result.end = possibleMoves[moveSelector(engine)];
 
     return result;
-
-    //return std::pair<int, int>();
 }
