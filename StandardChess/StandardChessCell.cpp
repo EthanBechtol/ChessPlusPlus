@@ -10,6 +10,15 @@ StandardChessCell::StandardChessCell() {
     state = ChessCellState::empty;
 }
 
+StandardChessCell::StandardChessCell(const StandardChessCell& other) {
+    if(other.state == ChessCellState::white || other.state == ChessCellState::black)
+        piece = std::make_unique<ChessPiece>(*other.piece);
+    else
+        piece = nullptr;
+
+    state = other.state;
+}
+
 ChessCellState StandardChessCell::getState() const {
     return state;
 }

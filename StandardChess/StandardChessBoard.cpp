@@ -29,6 +29,17 @@ StandardChessBoard::StandardChessBoard(bool initCells)
     }
 }
 
+StandardChessBoard::StandardChessBoard(const StandardChessBoard& other)
+    : cells{std::vector<std::vector<std::shared_ptr<StandardChessCell>>>(8, std::vector<std::shared_ptr<StandardChessCell>>(8))},
+      _width{other._width}, _height{other._height} {
+
+    for(int row = 0; row != _height; ++row){
+        for(int col = 0; col != _width; ++col){
+            cells[row][col] = std::make_shared<StandardChessCell>(*other.cells[row][col]);
+        }
+    }
+}
+
 
 StandardChessBoard::StandardChessBoard(StandardChessBoard&& b): _width{0}, _height{0} {
     std::swap(cells, b.cells);

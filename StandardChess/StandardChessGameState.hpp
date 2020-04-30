@@ -13,6 +13,9 @@ class StandardChessGameState : public ChessGameState {
 public:
     explicit StandardChessGameState(StandardChessBoard board);
 
+    // Copy constructor
+    explicit StandardChessGameState(const StandardChessGameState& other);
+
     // board() returns a const reference to a ChessBoard containing the layout of the board
     // in the specific game state.
     virtual const ChessBoard& board() const noexcept override;
@@ -45,10 +48,13 @@ public:
     // Generally intended for use by an AI to simulate moves.
     virtual std::unique_ptr<ChessGameState> clone() const override;
 
-
     virtual std::vector<std::pair<int, int>> getValidPieceMoves(std::pair<int, int> start) const override;
 
+    virtual const std::unordered_map<std::string, int>& getCapturedPieces(bool forWhite) const override;
+
 private:
+    std::unique_ptr<StandardChessBoard> _board;
+
     // [white/black]Points keeps track of the number of points amassed by each colored player.
     int whitePoints;
     int blackPoints;
@@ -60,6 +66,11 @@ private:
     // If true, the winner can be determined by whose turn it current is.
     bool gameOver;
 
+    // whiteCaptured and blackCaptured store the names of the pieces white or black has captured from the opposing team
+    // along with how many of each piece it has captured.
+    std::unordered_map<std::string, int> whiteCaptured;
+    std::unordered_map<std::string, int> blackCaptured;
+
     // isValidMoveThrow() validates that a move from a start position to an end position given the color piece is valid to
     // make. If not, then a ChessException will be thrown with the reason why a specific move cannot be made. This is
     // a helper function used by isValidMove() above which passes the move along with the CURRENT player whose turn it is.
@@ -68,6 +79,8 @@ private:
     // isValidMoveForPlayer() returns whether or not a piece at start can make a move to end validly given a particular
     // player color. Returns true if it is valid and false otherwise.
     bool isValidMoveForPlayer(std::pair<int, int> start, std::pair<int, int> end, bool isWhite) const;
+
+    bool checkmateAchieved(bool forWhite);
 };
 
 

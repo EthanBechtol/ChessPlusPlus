@@ -22,6 +22,12 @@ StandardChessGameState::StandardChessGameState(StandardChessBoard board)
     _board = std::make_unique<StandardChessBoard>(std::move(board));
 }
 
+StandardChessGameState::StandardChessGameState(const StandardChessGameState& other)
+    : whitePoints{other.whitePoints}, blackPoints{other.blackPoints}, whiteTurn{other.whiteTurn}, gameOver{other.gameOver},
+      whiteCaptured{other.whiteCaptured}, blackCaptured{other.blackCaptured}{
+    _board = std::make_unique<StandardChessBoard>(*other._board);
+}
+
 const ChessBoard& StandardChessGameState::board() const noexcept {
     return *_board;
 }
@@ -125,11 +131,15 @@ void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, 
 
     // TODO make points more meaningful
     if(_board->getCell(end.first, end.second)->getState() != ChessCellState::empty){
+        std::string capturedName = _board->getCell(end.first, end.second)->getPiece().getName();
+
         if(whiteTurn){
             ++whitePoints;
+            ++whiteCaptured[capturedName];
         }
         else{
             ++blackPoints;
+            ++blackCaptured[capturedName];
         }
     }
     _board->movePiece(start, end);
@@ -137,8 +147,7 @@ void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, 
 }
 
 std::unique_ptr<ChessGameState> StandardChessGameState::clone() const {
-    // TODO implement cloning that DEEP copies the current state.
-    return std::unique_ptr<ChessGameState>();
+    return std::make_unique<StandardChessGameState>(*this);
 }
 
 std::vector<std::pair<int, int>> StandardChessGameState::getValidPieceMoves(std::pair<int, int> start) const {
@@ -171,4 +180,29 @@ std::vector<std::pair<int, int>> StandardChessGameState::getValidPieceMoves(std:
     }
 
     return result;
+}
+
+
+bool StandardChessGameState::checkmateAchieved(bool forWhite) {
+    std::pair<int, int> kingLoc;
+    bool kingFound = false;
+
+    for(int row = 0; row != _board->height() && !kingFound; ++row){
+        for(int col = 0; col != _board->width() && !kingFound; ++col){
+            if(_board->getCell(row, col)->getState() != ChessCellState::empty && _board->getCell(row, col)->getPiece().isWhite() == !forWhite &&
+               _board->getCell(row, col)->getPiece().getName() == "King"){
+                kingLoc = {row, col};
+                kingFound = true;
+            }
+        }
+    }
+
+    std::vector<std::pair<int, int>> kingMoves = getValidPieceMoves(kingLoc);
+
+    return false;
+}
+
+
+const std::unordered_map<std::string, int>& StandardChessGameState::getCapturedPieces(bool forWhite) const {
+    return forWhite ? whiteCaptured : blackCaptured;
 }

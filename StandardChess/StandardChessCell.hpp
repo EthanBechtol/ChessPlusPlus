@@ -12,6 +12,8 @@ class StandardChessCell : public ChessCell {
 public:
     StandardChessCell();
 
+    StandardChessCell(const StandardChessCell& other);
+
     // getState() returns the state of this cell (i.e. empty, black, white, etc.)
     ChessCellState getState() const override;
 

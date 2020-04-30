@@ -16,6 +16,10 @@ class ChessPiece {
 public:
     virtual ~ChessPiece() = default;
 
+    ChessPiece() = default;
+
+    ChessPiece(const ChessPiece& other);
+
     // isValidMove() returns whether the piece can make a move given a starting and ending
     // position according to it's move set.
     // NOTE: This will NOT take into account whether another piece occupies the tile, or whether

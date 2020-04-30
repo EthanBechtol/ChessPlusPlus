@@ -5,6 +5,11 @@
 #include "ChessPiece.hpp"
 
 
+ChessPiece::ChessPiece(const ChessPiece& other): moveSet{other.moveSet}, name{other.name}, white{other.white},
+    hasCaptureMoves{other.hasCaptureMoves}, hasJumpAbility{other.hasJumpAbility} {
+
+}
+
 bool ChessPiece::isValidMove(std::pair<int, int> start, std::pair<int, int> end) const {
     return true;
 }

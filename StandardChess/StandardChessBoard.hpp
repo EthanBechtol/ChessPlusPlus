@@ -19,6 +19,9 @@ public:
     // Constructs a StandardChessBoard of a custom width and height of empty ChessCells.
     StandardChessBoard(int width, int height);
 
+    // Constructs a copy of a StandardChessBoard from an existing one.
+    StandardChessBoard(const StandardChessBoard& other);
+
     // Constructs a StandardChessBoard from an expiring one.
     StandardChessBoard(StandardChessBoard&& b);
 
