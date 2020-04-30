@@ -40,8 +40,12 @@ add_executable(ChessPlusPlus main.cpp
 
         StandardChess/StandardChessAIs/RandomAI.cpp
         StandardChess/StandardChessAIs/RandomAI.hpp
+        StandardChess/StandardChessAIs/MinMaxAI.cpp
+        StandardChess/StandardChessAIs/MinMaxAI.hpp
 
         Experimental/EXPChessMove.hpp
 
         Input/InputReader.cpp
-        Input/InputReader.hpp StandardChess/StandardChessAIs/RandomAI.cpp StandardChess/StandardChessAIs/RandomAI.hpp ChessGame/ChessPieceMobility.hpp ChessUtility/PairHash.hpp ChessGame/ChessAIException.hpp)
+        Input/InputReader.hpp
+
+        ChessUtility/PairHash.hpp)
