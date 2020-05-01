@@ -43,9 +43,4 @@ add_executable(ChessPlusPlus main.cpp
         StandardChess/StandardChessAIs/MinMaxAI.cpp
         StandardChess/StandardChessAIs/MinMaxAI.hpp
 
-        Experimental/EXPChessMove.hpp
-
-        Input/InputReader.cpp
-        Input/InputReader.hpp
-
         ChessUtility/PairHash.hpp)
