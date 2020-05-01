@@ -11,20 +11,20 @@ include:
 
 ---
 Usage
----
+===
 Currently, as a proof of concept, the program will run and show a game between the two currently implemented 
 AIs (min/max with alpha-beta pruning and a randomAI). Future commits will add the ability to specify each player as either
 a human or one of the included AIs.
 
 
 AI Algorithms
+===
+Random - (RandomAI)
 ---
-
-###Random - (RandomAI)
 An AI that chooses its move randomly from a selection of all possible moves that can currently be made.
 
-&nbsp;
-###Min/Max with Alpha-Beta Pruning - (MinMaxAI)
+Min/Max with Alpha-Beta Pruning - (MinMaxAI)
+---
 An AI that chooses its move by simulating moves and choosing a move whose branch maximized its own score and minimized its opponents score.
 Score calculations are made in the following way:\
 &nbsp;&nbsp;+ the current score as defined by a game state for that player\
