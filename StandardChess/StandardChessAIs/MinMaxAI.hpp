@@ -9,19 +9,23 @@
 #include "../../ChessGame/ChessAI.hpp"
 
 class MinMaxAI : public ChessAI {
-public:
+private:
     /*
      * OPTIONS:
      *  - MAX_DEPTH: the maximum depth the AI will recurse in exploring possible move options.
      *  - (DISABLED) ENABLE_MULTI_THREADING: allows this AI to use multi-threading to explore move options in parallel, thus reducing runtime.
      *  - ENABLE_ALPHA_BETA_PRUNING: allows the AI to make use of alpha-beta pruning to reduce the runtime of its move search by eliminating "loss" branches.
      */
-    static constexpr unsigned short MAX_DEPTH = 2;
-    static constexpr bool ENABLE_MULTI_THREADING = false;
-    static constexpr bool ENABLE_ALPHA_BETA_PRUNING = false;
+    unsigned short MAX_DEPTH = 2;
+    bool ENABLE_MULTI_THREADING = false;
+    bool ENABLE_ALPHA_BETA_PRUNING = true;
 
+public:
     const static std::string AIName;
     const static std::string AIDesc;
+
+    MinMaxAI() = default;
+    MinMaxAI(unsigned short maxDepth, bool enableMultiThread, bool enableAlphaBetaPrune);
 
     ChessMove choseMove(const ChessGameState& state) override;
 

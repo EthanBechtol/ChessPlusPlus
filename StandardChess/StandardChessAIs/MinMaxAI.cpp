@@ -66,8 +66,12 @@ namespace {
     }
 }
 
+MinMaxAI::MinMaxAI(unsigned short maxDepth, bool enableMultiThread, bool enableAlphaBetaPrune)
+    : MAX_DEPTH{maxDepth}, ENABLE_MULTI_THREADING{enableMultiThread}, ENABLE_ALPHA_BETA_PRUNING{enableAlphaBetaPrune} {
 
-int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha, int beta, bool isWhiteAI) {
+}
+
+int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha, int beta, bool isWhiteAI, bool enableABPrune) {
     if (depth == 0)
         return evalState(state, isWhiteAI);
 
@@ -81,12 +85,14 @@ int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha
         for(const ChessMove& move : todo) {
             std::unique_ptr<ChessGameState> stateClone = state->clone();
             stateClone->makeMove(move.start, move.end);
-            maxResult = std::max(maxResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI));
+            maxResult = std::max(maxResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
 
-            // Don't bother with this branch if it is a loss so as to not waste time
-            alpha = std::max(alpha, maxResult);
-            if(alpha >= beta)
-                break;
+            if(enableABPrune) {
+                // Don't bother with this branch if it is a loss so as to not waste time
+                alpha = std::max(alpha, maxResult);
+                if (alpha >= beta)
+                    break;
+            }
         }
         return maxResult;
     } else {
@@ -96,12 +102,14 @@ int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha
         for (const ChessMove& move : todo) {
             std::unique_ptr<ChessGameState> stateClone = state->clone();
             stateClone->makeMove(move.start, move.end);
-            minResult = std::min(minResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI));
+            minResult = std::min(minResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
 
-            // Don't bother with this branch if it is a loss so as to not waste time
-            beta = std::min(beta, minResult);
-            if(alpha >= beta)
-                break;
+            if(enableABPrune) {
+                // Don't bother with this branch if it is a loss so as to not waste time
+                beta = std::min(beta, minResult);
+                if (alpha >= beta)
+                    break;
+            }
         }
         return minResult;
     }
@@ -123,7 +131,7 @@ ChessMove MinMaxAI::choseMove(const ChessGameState& state) {
         std::unique_ptr<ChessGameState> branch = state.clone();
         branch->makeMove(branchMove.start, branchMove.end);
 
-        int branchScore = alphaBetaSearch(branch, MAX_DEPTH, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), isWhiteAI);
+        int branchScore = alphaBetaSearch(branch, MAX_DEPTH, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), isWhiteAI, ENABLE_ALPHA_BETA_PRUNING);
 
         if (branchScore > maxScore) {
             maxScore = branchScore;
