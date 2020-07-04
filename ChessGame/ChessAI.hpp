@@ -27,6 +27,10 @@ public:
     // return a const reference to their respective data members with no way to change them.
     virtual const std::string& name() const = 0;
     virtual const std::string& description() const = 0;
+
+    // clone() returns a dynamically allocated version of a ChessAI instance in order to facilitate copying the underlying
+    // derived class without directly knowing its type.
+    virtual ChessAI* clone() const = 0;
 };
 
 

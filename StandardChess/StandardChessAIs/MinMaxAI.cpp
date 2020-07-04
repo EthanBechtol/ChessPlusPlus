@@ -71,6 +71,9 @@ MinMaxAI::MinMaxAI(unsigned short maxDepth, bool enableMultiThread, bool enableA
 
 }
 
+// TODO Profiling reveals cloning the state to simulate moves is taking ~53.4% of total runtime delays.
+//  Perhaps rather than cloning the state each time a successive call is made, the same state can be used and rollback
+//  the changes once the current function is over, which would drastically reduce the time AI's take to choose a move.
 int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha, int beta, bool isWhiteAI, bool enableABPrune) {
     if (depth == 0)
         return evalState(state, isWhiteAI);
@@ -140,4 +143,8 @@ ChessMove MinMaxAI::choseMove(const ChessGameState& state) {
     }
 
     return bestMove;
+}
+
+MinMaxAI* MinMaxAI::clone() const {
+    return new MinMaxAI;
 }

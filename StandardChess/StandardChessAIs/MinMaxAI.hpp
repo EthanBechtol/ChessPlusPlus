@@ -28,6 +28,7 @@ public:
     MinMaxAI(unsigned short maxDepth, bool enableMultiThread, bool enableAlphaBetaPrune);
 
     ChessMove choseMove(const ChessGameState& state) override;
+    MinMaxAI* clone() const override;
 
     const std::string& name() const override { return AIName; };
     const std::string& description() const override { return AIDesc; };

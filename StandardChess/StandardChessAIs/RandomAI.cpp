@@ -42,3 +42,7 @@ ChessMove RandomAI::choseMove(const ChessGameState& state) {
 
     return result;
 }
+
+RandomAI* RandomAI::clone() const {
+    return new RandomAI;
+}

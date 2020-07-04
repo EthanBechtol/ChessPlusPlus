@@ -15,6 +15,8 @@ public:
 
     ChessMove choseMove(const ChessGameState& state) override;
 
+    RandomAI* clone() const override;
+
     const std::string& name() const override { return AIName; };
     const std::string& description() const override { return AIDesc; };
 };
