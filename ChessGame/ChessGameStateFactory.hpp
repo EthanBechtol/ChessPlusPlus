@@ -9,11 +9,15 @@
 #include <memory>
 #include "ChessGameState.hpp"
 
+enum GameStateType {
+    standard
+};
+
 class ChessGameStateFactory {
 public:
     // makeNewGameState() generates a new game state and returns it as a unique_ptr.
     // For the moment, this will just generate a standard game setup.
-    std::unique_ptr<ChessGameState> makeNewGameState(unsigned int gameType);
+    std::unique_ptr<ChessGameState> makeNewGameState(GameStateType gameType);
 
     //std::unique_ptr<ChessGameState> makeNewGameState(int width, int height);
 

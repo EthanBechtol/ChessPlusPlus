@@ -3,18 +3,19 @@
 //
 
 #include "ChessGameStateFactory.hpp"
+#include "../StandardChess/StandardChessBoard.hpp"
+#include "../StandardChess/StandardChessGameState.hpp"
 
 
-
-std::unique_ptr<ChessGameState> ChessGameStateFactory::makeNewGameState(unsigned int gameType) {
+std::unique_ptr<ChessGameState> ChessGameStateFactory::makeNewGameState(GameStateType gameType) {
     std::unique_ptr<ChessGameState> state = nullptr;
     switch(gameType){
-        case 0:
-            // TODO return standard game state
-            // Return a fresh standard chess game state (filled)
+        // Return a fresh standard chess game state (filled)
+        case standard:
+            state = std::make_unique<StandardChessGameState> (std::move(StandardChessBoard()));
             break;
-        default:
 
+        default:
             break;
     }
 
