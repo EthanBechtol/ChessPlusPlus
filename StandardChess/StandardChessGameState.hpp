@@ -6,8 +6,10 @@
 #define CHESSPLUSPLUS_STANDARDCHESSGAMESTATE_HPP
 
 
+#include <stack>
 #include "../ChessGame/ChessGameState.hpp"
 #include "StandardChessBoard.hpp"
+#include "StandardChessMoveData.hpp"
 
 class StandardChessGameState : public ChessGameState {
 public:
@@ -44,6 +46,15 @@ public:
     // is thrown.
     virtual void makeMove(std::pair<int, int> start, std::pair<int, int> end) override;
 
+    // undoMove returns the current game state to <amount> moves in the past undoing any moves either player made along
+    // the way. If the <amount> parameter is greater than the number of undo moves stored, a ChessException is thrown.
+    virtual void undoMove(unsigned int amount = 1) override;
+
+    // undoMove returns the current game state to <amount> moves in the future redoing any moves undone via calling
+    // undoMove(). If the <amount> parameter is greater than the number of redo moves stored, a ChessException is thrown.
+    // If there are moves stored on the redo stack and a new move is made, the redo stack is completely cleared.
+    virtual void redoMove(unsigned int amount = 1) override;
+
     // clone() returns a unique_ptr copy of the current game state.
     // Generally intended for use by an AI to simulate moves.
     virtual std::unique_ptr<ChessGameState> clone() const override;
@@ -70,6 +81,19 @@ private:
     // along with how many of each piece it has captured.
     std::unordered_map<std::string, int> whiteCaptured;
     std::unordered_map<std::string, int> blackCaptured;
+
+    // [white/black]InCheck keeps track of whether the respective player's king is in check. This will prevent a player
+    // from moving other pieces if their king is in danger of capture.
+    bool whiteInCheck;
+    bool blackInCheck;
+
+    // [undo/redo]Stack are used to keep track of moves as they happen in order to support undoing/redoing moves
+    // over the course of the game.
+    std::stack<ChessMoveData> undoStack;
+    std::stack<ChessMoveData> redoStack;
+
+    // redoInProgress inhibits clearing the redoStack when redo() requests a move to be made.
+    bool redoInProgress = false;
 
     // isValidMoveThrow() validates that a move from a start position to an end position given the color piece is valid to
     // make. If not, then a ChessException will be thrown with the reason why a specific move cannot be made. This is

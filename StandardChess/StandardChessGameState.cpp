@@ -12,7 +12,7 @@ namespace {
     }
 
     template <typename T, typename T2>
-    std::pair<int, int> addPair(const std::pair<T, T2>& pair, const std::pair<T, T2>& pair2){
+    std::pair<T, T2> addPair(const std::pair<T, T2>& pair, const std::pair<T, T2>& pair2){
         return {pair.first + pair2.first, pair.second + pair2.second};
     }
 }
@@ -142,8 +142,59 @@ void StandardChessGameState::makeMove(std::pair<int, int> start, std::pair<int, 
             ++blackCaptured[capturedName];
         }
     }
+
+    // Copy piece and start/end positions and push them to the undo stack before overwriting them in the chess board.
+    const ChessCell& endCell = *_board->getCell(end.first, end.second);
+    ChessPiece moveDataPiece;
+
+    if(endCell.getState() != ChessCellState::empty)
+        moveDataPiece = endCell.getPiece();
+    ChessMoveData moveData(moveDataPiece, ChessMove(start, end));
+    undoStack.push(moveData);
+
+    // Unless redo() is requesting this move to be made, the redoStack will be cleared.
+    if(!redoInProgress)
+        while(!redoStack.empty())
+            redoStack.pop();
+
     _board->movePiece(start, end);
     whiteTurn = !whiteTurn;
+}
+
+void StandardChessGameState::undoMove(unsigned int amount) {
+    if(amount > undoStack.size())
+        throw ChessException{"Requested to undo " + std::to_string(amount) + " moves, but only "
+                             + std::to_string(undoStack.size()) + " moves are available to be undone."};
+
+    for(int i = 0; i != amount; ++i) {
+        ChessMoveData& undoData = undoStack.top();
+
+        _board->movePiece(undoData.moveCoords.end, undoData.moveCoords.start);
+        _board->getCell(undoData.moveCoords.end.first, undoData.moveCoords.end.second)->setPiece(
+                undoData.takenPiece == nullptr ? nullptr : std::make_unique<ChessPiece>(*undoData.takenPiece));
+
+        redoStack.push(undoData);
+        undoStack.pop();
+
+        whiteTurn = !whiteTurn;
+    }
+}
+
+void StandardChessGameState::redoMove(unsigned int amount) {
+    if(amount > redoStack.size())
+        throw ChessException{"Requested to redo " + std::to_string(amount) + " moves, but only "
+                             + std::to_string(redoStack.size()) + " moves are available to be redone."};
+
+    for(int i = 0; i != amount; ++i){
+        ChessMoveData& redoData = redoStack.top();
+
+        redoInProgress = true;
+        makeMove(redoData.moveCoords.start, redoData.moveCoords.end);
+        redoInProgress = false;
+
+        undoStack.push(redoData);
+        redoStack.pop();
+    }
 }
 
 std::unique_ptr<ChessGameState> StandardChessGameState::clone() const {

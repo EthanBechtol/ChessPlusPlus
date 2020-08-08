@@ -24,6 +24,7 @@ add_executable(ChessPlusPlus main.cpp
         StandardChess/StandardChessCell.hpp
         StandardChess/StandardChessGameState.cpp
         StandardChess/StandardChessGameState.hpp
+        StandardChess/StandardChessMoveData.hpp
 
         StandardChess/StandardChessPieces/Knight.cpp
         StandardChess/StandardChessPieces/Knight.hpp
