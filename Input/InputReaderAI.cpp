@@ -11,7 +11,7 @@ InputReaderAI::InputReaderAI(ChessAI& source): InputReader(), source{source.clon
 
 InputRequest InputReaderAI::getInput(const ChessGameState& state) const {
     ChessMove move = source->choseMove(state);
-    return InputRequest{RequestType::move, move, ""};
+    return InputRequest{RequestType::move, move, source->name(), ""};
 }
 
 InputReaderAI::~InputReaderAI() {

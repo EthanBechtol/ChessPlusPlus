@@ -23,6 +23,7 @@ enum RequestType {
 struct InputRequest {
     RequestType requestType;
     ChessMove moveRequest;
+    std::string requester;
     std::string data;
 };
 
