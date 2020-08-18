@@ -43,12 +43,12 @@ public:
 
     // undoMove returns the current game state to <amount> moves in the past undoing any moves either player made along
     // the way. If the <amount> parameter is greater than the number of undo moves stored, a ChessException is thrown.
-    virtual void undoMove(unsigned int amount) = 0;
+    virtual void undoMove(unsigned int amount = 1) = 0;
 
     // undoMove returns the current game state to <amount> moves in the future redoing any moves undone via calling
     // undoMove(). If the <amount> parameter is greater than the number of redo moves stored, a ChessException is thrown.
     // If there are moves stored on the redo stack and a new move is made, the redo stack is completely cleared.
-    virtual void redoMove(unsigned int amount) = 0;
+    virtual void redoMove(unsigned int amount = 1) = 0;
 
     // clone() returns a unique_ptr copy of the current game state.
     // Generally intended for use by an AI to simulate moves.
