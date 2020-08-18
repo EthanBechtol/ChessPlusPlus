@@ -35,6 +35,7 @@ namespace {
                 {"King",      1000},
                 {"Queen", 600},
                 {"Rook",     300},
+                {"Bishop", 300},
                 {"Knight",     100},
                 {"Pawn",        40}
         };
@@ -64,16 +65,30 @@ namespace {
 
         return result;
     }
+
+    std::vector<std::vector<ChessMove>> divideMoveWork(const std::vector<ChessMove>& moves, int partitions){
+        std::vector<std::vector<ChessMove>> result(partitions);
+
+        int copyIndex = 0;
+        int partIndex = 0;
+        while(copyIndex != moves.size()){
+            if(partIndex == partitions)
+                partIndex = 0;
+
+            result[partIndex].push_back(moves[copyIndex]);
+            ++copyIndex;
+            ++partIndex;
+        }
+
+        return result;
+    }
 }
 
-MinMaxAI::MinMaxAI(unsigned short maxDepth, bool enableMultiThread, bool enableAlphaBetaPrune)
-    : MAX_DEPTH{maxDepth}, ENABLE_MULTI_THREADING{enableMultiThread}, ENABLE_ALPHA_BETA_PRUNING{enableAlphaBetaPrune} {
+MinMaxAI::MinMaxAI(unsigned short maxDepth, bool enableMultiThread, unsigned short maxThreads, bool enableAlphaBetaPrune)
+    : MAX_DEPTH{maxDepth}, ENABLE_MULTI_THREADING{enableMultiThread}, MAX_THREADS{maxThreads}, ENABLE_ALPHA_BETA_PRUNING{enableAlphaBetaPrune} {
 
 }
 
-// TODO Profiling reveals cloning the state to simulate moves is taking ~53.4% of total runtime delays.
-//  Perhaps rather than cloning the state each time a successive call is made, the same state can be used and rollback
-//  the changes once the current function is over, which would drastically reduce the time AI's take to choose a move.
 int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha, int beta, bool isWhiteAI, bool enableABPrune) {
     if (depth == 0)
         return evalState(state, isWhiteAI);
@@ -86,9 +101,9 @@ int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha
         std::vector<ChessMove> todo = getNextMoves(*state, isWhiteAI);
 
         for(const ChessMove& move : todo) {
-            std::unique_ptr<ChessGameState> stateClone = state->clone();
-            stateClone->makeMove(move.start, move.end);
-            maxResult = std::max(maxResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
+            state->makeMove(move.start, move.end);
+            maxResult = std::max(maxResult, alphaBetaSearch(state, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
+            state->undoMove();
 
             if(enableABPrune) {
                 // Don't bother with this branch if it is a loss so as to not waste time
@@ -103,9 +118,9 @@ int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha
         std::vector<ChessMove> todo = getNextMoves(*state, !isWhiteAI);
 
         for (const ChessMove& move : todo) {
-            std::unique_ptr<ChessGameState> stateClone = state->clone();
-            stateClone->makeMove(move.start, move.end);
-            minResult = std::min(minResult, alphaBetaSearch(stateClone, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
+            state->makeMove(move.start, move.end);
+            minResult = std::min(minResult, alphaBetaSearch(state, depth - 1, alpha, beta, isWhiteAI, enableABPrune));
+            state->undoMove();
 
             if(enableABPrune) {
                 // Don't bother with this branch if it is a loss so as to not waste time
@@ -118,9 +133,11 @@ int alphaBetaSearch(std::unique_ptr<ChessGameState> &state, int depth, int alpha
     }
 }
 
-
-
 ChessMove MinMaxAI::choseMove(const ChessGameState& state) {
+    if(ENABLE_MULTI_THREADING){
+        return MTChooseMove(state);
+    }
+
     bool isWhiteAI = state.isWhiteTurn();
     int maxScore = std::numeric_limits<int>::min();
     std::vector<ChessMove> nextMoves = getNextMoves(state, isWhiteAI);
@@ -146,5 +163,47 @@ ChessMove MinMaxAI::choseMove(const ChessGameState& state) {
 }
 
 MinMaxAI* MinMaxAI::clone() const {
-    return new MinMaxAI;
+    return new MinMaxAI(MAX_DEPTH, ENABLE_MULTI_THREADING, MAX_THREADS, ENABLE_ALPHA_BETA_PRUNING);
+}
+
+void MinMaxAI::MTSearchHelper(const ChessGameState& state, const std::vector<ChessMove>& moveQueue, int& maxScore, ChessMove& bestMove, bool isWhiteAI){
+    if(moveQueue.empty())
+        return;
+
+    for (auto branchMove : moveQueue) {
+        std::unique_ptr<ChessGameState> branch = state.clone();
+        branch->makeMove(branchMove.start, branchMove.end);
+
+        int branchScore = alphaBetaSearch(branch, MAX_DEPTH, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), isWhiteAI, ENABLE_ALPHA_BETA_PRUNING);
+
+        std::lock_guard<std::mutex> branchScoreLock(scoringMutex);
+
+        if (branchScore > maxScore) {
+            maxScore = branchScore;
+            bestMove = branchMove;
+        }
+    }
+}
+
+ChessMove MinMaxAI::MTChooseMove(const ChessGameState& state) {
+    bool isWhiteAI = state.isWhiteTurn();
+    int maxScore = std::numeric_limits<int>::min();
+    std::vector<ChessMove> nextMoves = getNextMoves(state, isWhiteAI);
+    ChessMove bestMove = nextMoves[0];
+
+    // For each move, that can be made, simulate moves via clones of the current state, and receive a score for that particular branch.
+    // The highest branch score is determined to be the best move to make, and will be returned from the function.
+    // All the possible moves are divided evenly among the number of threads allotted.
+    std::vector<std::thread> activeThreads;
+    std::vector<std::vector<ChessMove>> threadWork = divideMoveWork(nextMoves, MAX_THREADS);
+    for(int i = 0; i != threadWork.size(); ++i){
+        activeThreads.emplace_back(std::thread(&MinMaxAI::MTSearchHelper, this,
+                std::ref(state), std::ref(threadWork[i]), std::ref(maxScore), std::ref(bestMove), isWhiteAI));
+    }
+
+    for(int i = 0; i != activeThreads.size(); ++i){
+        activeThreads[i].join();
+    }
+
+    return bestMove;
 }
