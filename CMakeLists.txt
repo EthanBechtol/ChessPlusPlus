@@ -11,6 +11,8 @@ add_executable(ChessPlusPlus main.cpp
         ChessGame/ChessException.hpp
         ChessGame/ChessAI.hpp
         ChessGame/ChessAIException.hpp
+        ChessGame/ChessGameManager.cpp
+        ChessGame/ChessGameManager.hpp
         ChessGame/ChessGameState.hpp
         ChessGame/ChessGameStateFactory.cpp
         ChessGame/ChessGameStateFactory.hpp
