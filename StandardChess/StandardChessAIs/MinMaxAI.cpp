@@ -19,8 +19,14 @@ namespace {
             for(int col = 0; col != board.width(); ++col) {
                 if(board.getCell(row, col)->getState() != ChessCellState::empty && board.getCell(row, col)->getState() == soughtCellState) {
                     for(std::pair<int, int>& endCoords : state.getValidPieceMoves({row, col})) {
-                        if(state.isValidMove(std::make_pair(row, col), endCoords))
-                            result.emplace_back(std::make_pair(row, col), endCoords);
+                        if(state.isValidMove(std::make_pair(row, col), endCoords)) {
+                            // TODO look into optimizing this operation
+                            if (state.board().getCell(endCoords.first, endCoords.second)->getState() !=
+                                ChessCellState::empty)
+                                result.insert(result.begin(), ChessMove({row, col}, endCoords));
+                            else
+                                result.emplace_back(std::make_pair(row, col), endCoords);
+                        }
                     }
                 }
             }
