@@ -33,7 +33,7 @@ bool Queen::isValidMove(std::pair<int, int> start, std::pair<int, int> end) cons
     int xDiff = std::abs(start.first - end.first);
     int yDiff = std::abs(start.second - end.second);
 
-    return (start.first == end.first && end.second - start.second == 0)
-        || (start.second == end.second && end.first - start.first == 0)
+    return (start.first == end.first)
+        || (start.second == end.second)
         || xDiff == yDiff;
 }

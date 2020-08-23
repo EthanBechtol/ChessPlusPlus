@@ -24,5 +24,5 @@ Rook::Rook(bool isWhite): Rook() {
 }
 
 bool Rook::isValidMove(std::pair<int, int> start, std::pair<int, int> end) const {
-    return (start.first == end.first && end.second - start.second == 0) || (start.second == end.second && end.first - start.first == 0);
+    return (start.first == end.first) || (start.second == end.second);
 }
