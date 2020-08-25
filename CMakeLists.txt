@@ -3,7 +3,7 @@ project(ChessPlusPlus)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(ChessPlusPlus main.cpp
+set (SOURCES
         ChessGame/ChessBoard.hpp
         ChessGame/ChessCellState.hpp
         ChessGame/ChessCell.hpp
@@ -45,6 +45,8 @@ add_executable(ChessPlusPlus main.cpp
         StandardChess/StandardChessAIs/RandomAI.hpp
         StandardChess/StandardChessAIs/MinMaxAI.cpp
         StandardChess/StandardChessAIs/MinMaxAI.hpp
+        StandardChess/StandardChessAIs/IterativeDeepeningAI.cpp
+        StandardChess/StandardChessAIs/IterativeDeepeningAI.hpp
 
         Input/InputReader.hpp
         Input/InputRequest.hpp
@@ -52,3 +54,5 @@ add_executable(ChessPlusPlus main.cpp
         Input/InputReaderAI.hpp
 
         ChessUtility/PairHash.hpp)
+
+add_executable(ChessPlusPlus main.cpp ${SOURCES})
