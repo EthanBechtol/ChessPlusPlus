@@ -17,7 +17,8 @@
 enum RequestType {
     move,  // makes a move on the chess board
     quit,  // exits the game (only able to be made by a human player)
-    stats  // returns statistics about the game (not currently implemented)
+    stats,  // returns statistics about the game (not currently implemented)
+    invalid, // used internally to indicate a malformed request
 };
 
 struct InputRequest {

@@ -50,5 +50,7 @@ add_executable(ChessPlusPlus main.cpp
         Input/InputRequest.hpp
         Input/InputReaderAI.cpp
         Input/InputReaderAI.hpp
+        Input/InputReaderHuman.cpp
+        Input/InputReaderHuman.hpp
 
         ChessUtility/PairHash.hpp)

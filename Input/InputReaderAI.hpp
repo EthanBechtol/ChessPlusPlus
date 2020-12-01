@@ -11,7 +11,7 @@
 
 class InputReaderAI : public InputReader {
 public:
-    InputReaderAI(ChessAI& source);
+    explicit InputReaderAI(ChessAI& source);
 
     InputRequest getInput(const ChessGameState& state) const override;
 
