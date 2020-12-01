@@ -7,6 +7,7 @@
 
 
 #include <string>
+#include <utility>
 #include <vector>
 #include <unordered_set>
 #include "ChessPieceMobility.hpp"
@@ -38,8 +39,11 @@ public:
     // For example, a knight can jump over a line of pawns while a rook cannot.
     virtual bool canJump() const { return hasJumpAbility; };
 
-    // getName() returns the name of the current piece
+    // getName() returns the name of the current piece.
     virtual std::string getName() const { return name; };
+
+    // setName() changes the name of the current piece.
+    virtual void setName(std::string newName) { name = std::move(newName); };
 
     // isWhite() & isBlack() return whether the piece is colored white or black respectively.
     virtual bool isWhite() const { return white; }
