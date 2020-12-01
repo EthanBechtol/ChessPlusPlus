@@ -23,11 +23,16 @@ private:
     unsigned short MAX_THREADS = 12;
     bool ENABLE_ALPHA_BETA_PRUNING = true;
 
+    static constexpr unsigned short DEFAULT_MAX_DEPTH = 2;
+    static constexpr bool DEFAULT_ENABLE_MULTI_THREADING = true;
+    static constexpr unsigned short DEFAULT_MAX_THREADS = 12;
+    static constexpr bool DEFAULT_ENABLE_ALPHA_BETA_PRUNING = true;
+
 public:
     const static std::string AIName;
     const static std::string AIDesc;
 
-    MinMaxAI() = default;
+    MinMaxAI();
     MinMaxAI(unsigned short maxDepth, bool enableMultiThread, unsigned short maxThreads, bool enableAlphaBetaPrune);
 
     ChessMove choseMove(const ChessGameState& state) override;

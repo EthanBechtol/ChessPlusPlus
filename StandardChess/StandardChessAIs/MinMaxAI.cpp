@@ -90,6 +90,11 @@ namespace {
     }
 }
 
+MinMaxAI::MinMaxAI(): MinMaxAI(DEFAULT_MAX_DEPTH, DEFAULT_ENABLE_MULTI_THREADING, DEFAULT_MAX_THREADS,
+                               DEFAULT_ENABLE_ALPHA_BETA_PRUNING) {
+
+}
+
 MinMaxAI::MinMaxAI(unsigned short maxDepth, bool enableMultiThread, unsigned short maxThreads, bool enableAlphaBetaPrune)
     : MAX_DEPTH{maxDepth}, ENABLE_MULTI_THREADING{enableMultiThread}, MAX_THREADS{maxThreads}, ENABLE_ALPHA_BETA_PRUNING{enableAlphaBetaPrune} {
 
