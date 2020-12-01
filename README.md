@@ -4,7 +4,7 @@ use of object-oriented inheritance principles to make future expansion not just 
 is inheriting from a base class, defining its custom behavior, and registering it.
 This project is currently in progress, and as such, some features are not quite complete yet. 
 
-![SampleAIInteraction](Misc/SampleAIInteractionText.png)
+<img src="Misc/SampleAIInteractionText.png" alt="drawing" width="558" height="424"/>
 
 ---
 Usage
