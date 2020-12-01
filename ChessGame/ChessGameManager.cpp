@@ -44,6 +44,7 @@ void ChessGameManager::run() {
     std::chrono::duration<double, std::milli> totalP2Time = std::chrono::milliseconds(0);
     unsigned int p1Moves = 0;
     unsigned int p2Moves = 0;
+    gameState->board().outputBoard(std::cout);
 
     while(gameState->whiteScore() < 10 && gameState->blackScore() < 10){
         InputRequest playerRequest;
@@ -52,7 +53,6 @@ void ChessGameManager::run() {
         std::chrono::steady_clock::time_point startTime = std::chrono::steady_clock::now();
         if(gameState->isWhiteTurn()) {
             playerRequest = player1->getInput(*gameState);
-
         }
         else {
             playerRequest = player2->getInput(*gameState);
@@ -61,6 +61,14 @@ void ChessGameManager::run() {
         std::chrono::steady_clock::time_point endTime = std::chrono::steady_clock::now();
         std::chrono::duration<double, std::milli> elapsedTime = endTime - startTime;
         //std::chrono::steady_clock::duration elapsedTime = std::chrono::duration_cast<std::chrono::seconds>(endTime - startTime);
+
+        if(playerRequest.requestType == RequestType::quit)
+            break;
+        else if(playerRequest.requestType == RequestType::stats)
+           std::cout << "Placeholder statistic text" << std::endl;
+        else if(playerRequest.requestType == RequestType::invalid)
+            continue;
+
 
         if(gameState->isWhiteTurn()) {
             totalP1Time += elapsedTime;
@@ -88,3 +96,25 @@ void ChessGameManager::run() {
               << "Player 2: " <<  avgP2Time.count() << "ms\n";
 
 }
+
+bool ChessGameManager::setPlayer(int playerNumber, InputReader* newPlayer) {
+    if(playerNumber == 1){
+        delete player1;
+        player1 = newPlayer;
+        return true;
+    }
+    else if(playerNumber == 2){
+        delete player2;
+        player2 = newPlayer;
+        return true;
+    }
+    else
+        return false;
+}
+
+ChessGameManager::~ChessGameManager(){
+    delete player1;
+    delete player2;
+}
+
+
